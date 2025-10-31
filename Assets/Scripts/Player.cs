@@ -5,17 +5,25 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     [SerializeField] private TMP_Text TextoScore;
+    [SerializeField] private TMP_Text TextoLives;
     [SerializeField] float velocidad;
     [SerializeField] private int coins;
     [SerializeField] private string nextLevel;
     [SerializeField] private GameObject exit;
     private Vector3 posicionInicial;
+    private float timer = 1;
+    private int vidas;
+    private string actualScene;
+    [SerializeField] AudioSource[] audio;
 
    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        vidas = 3;
         TextoScore.SetText("Get " + coins.ToString() + " more coins");
+        TextoLives.SetText("x" + vidas.ToString() );
+        actualScene = SceneManager.GetActiveScene().name;
         posicionInicial = transform.position;
         
         Debug.Log(this.gameObject.transform.position.x);// Conseguir posición en X
@@ -27,7 +35,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PlayerMovement();
+        timer += Time.deltaTime;
+        if (timer >= 1)
+        {
+          PlayerMovement(); 
+        }
+      
     }
     
     //Ingredientes: Dos objetos con Collider
@@ -39,12 +52,20 @@ public class Player : MonoBehaviour
         if (other.gameObject.CompareTag("Moneda")) //Comparación de Tag
         {
             ObtainCoins(other);
+            audio[0].Play();
         }
 
         else if (other.gameObject.CompareTag("Trampa")) //Comparación de Tag
         {
             transform.position = posicionInicial;
-            Debug.Log("Hola");
+            timer = 0.75f;
+            audio[1].Play();
+            vidas--;
+            TextoLives.SetText("x" + vidas.ToString() );
+            if (vidas <= 0)
+            {
+                SceneManager.LoadScene(actualScene);
+            }
         }
         else if (other.gameObject.CompareTag("Meta")) //Comparación de Tag
         {
