@@ -29,7 +29,6 @@ public class Player : MonoBehaviour
         Debug.Log(this.gameObject.transform.position.x);// Conseguir posición en X
         //Establece uns rotcion con grados Euler
         this.gameObject.transform.rotation = Quaternion.Euler(0,0,0);
-    
     }
 
     // Update is called once per frame
